@@ -22,8 +22,12 @@ func GCSScanner(client *torrent.Client, torrentLoc string, timeInterval time.Dur
 	for {
 		err := filepath.Walk(torrentLoc, func(path string, info os.FileInfo, err error) error {
 			if err != nil {
-				log.Printf("met error %v", err)
-				return err
+				if err.Error() != "lstat ~/torrents-store/torrents: no such file or directory" {
+					log.Printf("met error %v", err)
+					return err
+				} else {
+					return nil
+				}
 			}
 			if info.IsDir() {
 				return nil
