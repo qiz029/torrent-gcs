@@ -21,9 +21,15 @@ func GCSScanner(client *torrent.Client, torrentLoc string, timeInterval time.Dur
 
 	for {
 		err := filepath.Walk(torrentLoc, func(path string, info os.FileInfo, err error) error {
-			if !info.IsDir() {
-				files = append(files, path)
+			if err != nil {
+				log.Printf("met error %v", err)
+				return err
+			}
+			if info.IsDir() {
 				return nil
+			}
+			if filepath.Ext(path) == ".torrent" {
+				files = append(files, path)
 			}
 			return nil
 		})
@@ -33,11 +39,13 @@ func GCSScanner(client *torrent.Client, torrentLoc string, timeInterval time.Dur
 		}
 
 		go DownloadFile(client, files)
+		time.Sleep(timeInterval)
 	}
 }
 
 func DownloadFile(client *torrent.Client, torrentFiles []string) {
 	var t *torrent.Torrent
+	t = nil
 	for _, v := range torrentFiles {
 		metaInfo, err := metainfo.LoadFromFile(v)
 		if err != nil {
@@ -52,10 +60,12 @@ func DownloadFile(client *torrent.Client, torrentFiles []string) {
 		}
 	}
 	// torrentBar(t)
-	go func() {
-		<-t.GotInfo()
-		t.DownloadAll()
-	}()
+	if t != nil {
+		go func() {
+			<-t.GotInfo()
+			t.DownloadAll()
+		}()
+	}
 }
 
 func torrentBar(t *torrent.Torrent) {

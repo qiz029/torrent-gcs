@@ -15,6 +15,7 @@ const (
 )
 
 func main() {
+	log.Printf("start to run torrent-gcs")
 	clientConf := torrent.NewDefaultClientConfig()
 	clientConf.Debug = false
 	clientConf.Seed = false // seed after downloaded
