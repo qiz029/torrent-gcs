@@ -10,8 +10,8 @@ import (
 )
 
 const (
-	videoFileLoc    = "/torrents-store/videos"
-	torrentsFileLoc = "/torrents-store/torrents"
+	videoFileLoc    = "~/torrents-store/videos"
+	torrentsFileLoc = "~/torrents-store/torrents"
 )
 
 func main() {
